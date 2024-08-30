@@ -1,0 +1,96 @@
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+
+class MainScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        
+        # Botão para Jogos Escolares
+        btn_gj = Button(text='Jogos Escolares')
+        btn_gj.bind(on_press=self.go_to_jogos)
+        
+        # Botão para Cultura
+        btn_cultura = Button(text='Cultura')
+        btn_cultura.bind(on_press=self.go_to_cultura)
+        
+        # Botão para Dança
+        btn_danca = Button(text='Dança')
+        btn_danca.bind(on_press=self.go_to_danca)
+        
+        # Botão para Esportes
+        btn_esportes = Button(text='Esportes')
+        btn_esportes.bind(on_press=self.go_to_esportes)
+        
+        layout.add_widget(btn_gj)
+        layout.add_widget(btn_cultura)
+        layout.add_widget(btn_danca)
+        layout.add_widget(btn_esportes)
+        
+        self.add_widget(layout)
+
+    def go_to_jogos(self, instance):
+        self.manager.current = 'jogos'
+
+    def go_to_cultura(self, instance):
+        self.manager.current = 'cultura'
+    
+    def go_to_danca(self, instance):
+        self.manager.current = 'danca'
+
+    def go_to_esportes(self, instance):
+        self.manager.current = 'esportes'
+
+
+class JogosScreen(Screen):
+    def __init__(self, **kwargs):
+        super(JogosScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Jogos Escolares'))
+        # Adicione mais widgets aqui para listar e interagir com jogos escolares
+        self.add_widget(layout)
+
+
+class CulturaScreen(Screen):
+    def __init__(self, **kwargs):
+        super(CulturaScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Cultura'))
+        # Adicione mais widgets aqui para eventos culturais
+        self.add_widget(layout)
+
+
+class DancaScreen(Screen):
+    def __init__(self, **kwargs):
+        super(DancaScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Dança'))
+        # Adicione mais widgets aqui para vídeos e tutoriais de dança
+        self.add_widget(layout)
+
+
+class EsportesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(EsportesScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        layout.add_widget(Label(text='Esportes'))
+        # Adicione mais widgets aqui para resultados e classificações
+        self.add_widget(layout)
+
+
+class SchoolApp(App):
+    def build(self):
+        sm = ScreenManager()
+        sm.add_widget(MainScreen(name='main'))
+        sm.add_widget(JogosScreen(name='jogos'))
+        sm.add_widget(CulturaScreen(name='cultura'))
+        sm.add_widget(DancaScreen(name='danca'))
+        sm.add_widget(EsportesScreen(name='esportes'))
+        return sm
+
+
+if __name__ == '__main__':
+    SchoolApp().run()
