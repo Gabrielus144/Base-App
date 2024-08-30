@@ -125,4 +125,188 @@ def get_data(table):
     return rows
 
 if __name__ == '__main__':
+
+from kivy.app import App
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.image import Image
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.video import Video
+from kivy.uix.popup import Popup
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.datepicker import DatePicker
+from kivy.properties import ObjectProperty
+from kivy.clock import Clock
+from database import init_db, get_data, insert_atleta, insert_avaliacao
+
+class MainScreen(Screen):
+    def __init__(self, **kwargs):
+        super(MainScreen, self).__init__(**kwargs)
+        layout = BoxLayout(orientation='vertical')
+        
+        btn_gj = Button(text='Jogos Escolares')
+        btn_gj.bind(on_press=self.go_to_jogos)
+        
+        btn_cultura = Button(text='Cultura')
+        btn_cultura.bind(on_press=self.go_to_cultura)
+        
+        btn_danca = Button(text='Dança')
+        btn_danca.bind(on_press=self.go_to_danca)
+        
+        btn_esportes = Button(text='Esportes')
+        btn_esportes.bind(on_press=self.go_to_esportes)
+        
+        btn_atletas = Button(text='Perfis dos Atletas')
+        btn_atletas.bind(on_press=self.go_to_atletas)
+
+        btn_galeria = Button(text='Galeria de Mídia')
+        btn_galeria.bind(on_press=self.go_to_galeria)
+
+        btn_calendario = Button(text='Calendário de Eventos')
+        btn_calendario.bind(on_press=self.go_to_calendario)
+
+        btn_adicionar = Button(text='Adicionar Dados')
+        btn_adicionar.bind(on_press=self.go_to_adicionar)
+        
+        layout.add_widget(btn_gj)
+        layout.add_widget(btn_cultura)
+        layout.add_widget(btn_danca)
+        layout.add_widget(btn_esportes)
+        layout.add_widget(btn_atletas)
+        layout.add_widget(btn_galeria)
+        layout.add_widget(btn_calendario)
+        layout.add_widget(btn_adicionar)
+        
+        self.add_widget(layout)
+
+    def go_to_jogos(self, instance):
+        self.manager.current = 'jogos'
+
+    def go_to_cultura(self, instance):
+        self.manager.current = 'cultura'
+    
+    def go_to_danca(self, instance):
+        self.manager.current = 'danca'
+
+    def go_to_esportes(self, instance):
+        self.manager.current = 'esportes'
+        
+    def go_to_atletas(self, instance):
+        self.manager.current = 'atletas'
+
+    def go_to_galeria(self, instance):
+        self.manager.current = 'galeria'
+
+    def go_to_calendario(self, instance):
+        self.manager.current = 'calendario'
+        
+    def go_to_adicionar(self, instance):
+        self.manager.current = 'adicionar'
+
+
+class JogosScreen(Screen):
+    def __init__(self, **kwargs):
+        super(JogosScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        data = get_data('jogos')
+        for row in data:
+            self.layout.add_widget(Label(text=f'{row[1]}: {row[2]}'))
+        scroll = ScrollView(size_hint=(1, None), size=(400, 400))
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+
+class CulturaScreen(Screen):
+    def __init__(self, **kwargs):
+        super(CulturaScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        data = get_data('cultura')
+        for row in data:
+            self.layout.add_widget(Label(text=f'{row[1]}: {row[2]}, Data: {row[3]}'))
+        scroll = ScrollView(size_hint=(1, None), size=(400, 400))
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+
+class DancaScreen(Screen):
+    def __init__(self, **kwargs):
+        super(DancaScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        data = get_data('danca')
+        for row in data:
+            video = Video(source=row[3], state='play', options={'eos': 'loop'})
+            self.layout.add_widget(Label(text=row[1]))
+            self.layout.add_widget(video)
+        scroll = ScrollView(size_hint=(1, None), size=(400, 400))
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+
+class EsportesScreen(Screen):
+    def __init__(self, **kwargs):
+        super(EsportesScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        data = get_data('esportes')
+        for row in data:
+            self.layout.add_widget(Label(text=f'{row[1]}: {row[2]}'))
+        scroll = ScrollView(size_hint=(1, None), size=(400, 400))
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+
+class AtletasScreen(Screen):
+    def __init__(self, **kwargs):
+        super(AtletasScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        data = get_data('atletas')
+        for row in data:
+            atleta_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=200)
+            atleta_layout.add_widget(Image(source=row[3], size_hint_x=None, width=100))
+            atleta_layout.add_widget(Label(text=f'Nome: {row[1]}\nBiografia: {row[2]}\nEstatísticas: {row[4]}'))
+            self.layout.add_widget(atleta_layout)
+        scroll = ScrollView(size_hint=(1, None), size=(400, 400))
+        scroll.add_widget(self.layout)
+        self.add_widget(scroll)
+
+
+class GaleriaScreen(Screen):
+    def __init__(self, **kwargs):
+        super(GaleriaScreen, self).__init__(**kwargs)
+        self.layout = BoxLayout(orientation='vertical')
+        self.update_content()
+        self.add_widget(self.layout)
+
+    def update_content(self):
+        self.layout.clear_widgets()
+        # Adicione conteúdo da galeria, exemplo de imagens estáticas
+        self.layout.add_widget(Image(source='path_to_some_image.jpg'))
+        self.layout.add_widget(Image(source='path_to_another
     SchoolApp().run()
